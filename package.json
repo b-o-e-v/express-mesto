@@ -1,0 +1,39 @@
+{
+  "name": "express-mesto",
+  "version": "1.0.0",
+  "description": "Mesto project frontend and backend",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app",
+    "dev": "nodemon app",
+    "lint": "npx eslint",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/b-o-e-v/express-mesto.git"
+  },
+  "keywords": [
+    "express",
+    "mesto"
+  ],
+  "author": "Boev Aleksandr",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/b-o-e-v/express-mesto/issues"
+  },
+  "homepage": "https://github.com/b-o-e-v/express-mesto#readme",
+  "devDependencies": {
+    "eslint": "^7.29.0",
+    "eslint-config-airbnb": "^18.2.1",
+    "eslint-plugin-import": "^2.23.4",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-react": "^7.24.0",
+    "eslint-plugin-react-hooks": "^4.2.0",
+    "nodemon": "^2.0.9"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "mongoose": "^5.13.0"
+  }
+}
