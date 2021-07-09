@@ -1,27 +1,36 @@
 const User = require('../models/user');
 
-const ERROR_CODE_400 = {
-  status: 400,
-  message: 'Переданы некорректные данные.',
-};
-
-const ERROR_CODE_404 = {
-  status: 404,
-  message: 'Пользователь по указанному _id не найден.',
-};
+const NotFoundError = require('../errors/notfound-error');
+const RequestError = require('../errors/request-error');
 
 module.exports.getUsers = (req, res) => {
   User.find({})
-    .then((user) => res.send(user))
-    .catch((err) => res.status(500).send(err.message));
+    .then((users) => res.send(users))
+    .catch((err) => {
+      res.status(err.statusCode).send({
+        message: err.statusCode === 500
+          ? 'Internal Server error'
+          : err.message,
+      });
+    });
 };
 
 module.exports.getUserId = (req, res) => {
   User.findById(req.params.userId)
-    .then((user) => res.send(user))
+    .orFail(new NotFoundError('Не найден пользователь с данным id'))
+    .then((user) => {
+      res.send(user);
+    })
     .catch((err) => {
-      if (err.name === 'CastError') res.status(ERROR_CODE_404.status).send({ message: ERROR_CODE_404.message });
-      res.status(500).send(err.message);
+      if (err.name === 'CastError') {
+        const ERROR = new RequestError('Ошибка. Повторите запрос');
+        res.status(ERROR.statusCode).send({ message: ERROR.message });
+      }
+      res.status(err.statusCode).send({
+        message: err.statusCode === 500
+          ? 'Internal Server error'
+          : err.message,
+      });
     });
 };
 
@@ -29,10 +38,17 @@ module.exports.createUser = (req, res) => {
   const { name, about, avatar } = req.body;
 
   User.create({ name, about, avatar })
-    .then((user) => res.send(user))
+    .then((user) => res.send({ _id: user._id }))
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE_400.status).send({ message: ERROR_CODE_400.message });
-      res.status(500).send(err.message);
+      if (err.name === 'ValidationError') {
+        const ERROR = new RequestError('Ошибка. Повторите запрос');
+        res.status(ERROR.statusCode).send({ message: ERROR.message });
+      }
+      res.status(err.statusCode).send({
+        message: err.statusCode === 500
+          ? 'Internal Server error'
+          : err.message,
+      });
     });
 };
 
@@ -42,13 +58,20 @@ module.exports.updateProfile = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { name, about }, {
     new: true,
     runValidators: true,
-    upsert: true,
   })
-    .then((user) => res.send(user))
+    .then((updateUser) => {
+      res.send((updateUser));
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE_400.status).send({ message: ERROR_CODE_400.message });
-      if (err.name === 'CastError') res.status(ERROR_CODE_404.status).send({ message: ERROR_CODE_404.message });
-      res.status(500).send(err.message);
+      if (err.name === 'ValidationError') {
+        const ERROR = new RequestError('Ошибка. Повторите запрос');
+        res.status(ERROR.statusCode).send({ message: ERROR.message });
+      }
+      res.status(err.statusCode).send({
+        message: err.statusCode === 500
+          ? 'Internal Server error'
+          : err.message,
+      });
     });
 };
 
@@ -58,12 +81,19 @@ module.exports.updateAvatar = (req, res) => {
   User.findByIdAndUpdate(req.user._id, { avatar }, {
     new: true,
     runValidators: true,
-    upsert: true,
   })
-    .then((user) => res.send(user))
+    .then((userNewAvatar) => {
+      res.send((userNewAvatar));
+    })
     .catch((err) => {
-      if (err.name === 'ValidationError') res.status(ERROR_CODE_400.status).send({ message: ERROR_CODE_400.message });
-      if (err.name === 'CastError') res.status(ERROR_CODE_404.status).send({ message: ERROR_CODE_404.message });
-      res.status(500).send(err.message);
+      if (err.name === 'ValidationError') {
+        const ERROR = new RequestError('Ошибка. Повторите запрос');
+        res.status(ERROR.statusCode).send({ message: ERROR.message });
+      }
+      res.status(err.statusCode).send({
+        message: err.statusCode === 500
+          ? 'Internal Server error'
+          : err.message,
+      });
     });
 };

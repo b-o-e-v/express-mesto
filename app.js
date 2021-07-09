@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 
+const NotFoundError = require('./errors/notfound-error');
+
 const { PORT = 3000 } = process.env;
 const app = express();
 
@@ -24,5 +26,10 @@ app.use((req, res, next) => {
 
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
+
+app.get('*', (req, res) => {
+  const ERROR = new NotFoundError('Ресурс не найден');
+  res.status(ERROR.statusCode).send({ message: ERROR.message });
+});
 
 app.listen(PORT);
