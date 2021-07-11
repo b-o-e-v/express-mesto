@@ -25,6 +25,7 @@ module.exports.createCard = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -41,6 +42,7 @@ module.exports.deleteCard = (req, res) => {
       if (card.owner.toString() !== req.user._id) {
         const ERROR = new ForbiddenError('У Вас недостаточно прав');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       card.remove()
         .then(() => res.send({ message: 'Kарточка удалена' }));
@@ -49,6 +51,7 @@ module.exports.deleteCard = (req, res) => {
       if (err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -69,6 +72,7 @@ module.exports.likeCard = (req, res) => {
       if (err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -89,6 +93,7 @@ module.exports.dislikeCard = (req, res) => {
       if (err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500

@@ -4,7 +4,7 @@
     "commonjs": true,
     "es2021": true
   },
-  "extends": ["airbnb"],
+  "extends": ["airbnb-base"],
   "rules": {
     "no-underscore-dangle": [
       "error",

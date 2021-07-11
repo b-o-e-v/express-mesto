@@ -27,7 +27,7 @@ app.use((req, res, next) => {
 app.use('/users', require('./routes/users'));
 app.use('/cards', require('./routes/cards'));
 
-app.get('*', (req, res) => {
+app.all('*', (req, res) => {
   const ERROR = new NotFoundError('Ресурс не найден');
   res.status(ERROR.statusCode).send({ message: ERROR.message });
 });

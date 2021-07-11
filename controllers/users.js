@@ -25,6 +25,7 @@ module.exports.getUserId = (req, res) => {
       if (err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -43,6 +44,7 @@ module.exports.createUser = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -66,6 +68,7 @@ module.exports.updateProfile = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
@@ -89,6 +92,7 @@ module.exports.updateAvatar = (req, res) => {
       if (err.name === 'ValidationError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
+        return;
       }
       res.status(err.statusCode).send({
         message: err.statusCode === 500
