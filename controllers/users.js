@@ -66,7 +66,7 @@ module.exports.updateProfile = (req, res) => {
       res.send((updateUser));
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
         return;
@@ -91,7 +91,7 @@ module.exports.updateAvatar = (req, res) => {
       res.send((userNewAvatar));
     })
     .catch((err) => {
-      if (err.name === 'ValidationError') {
+      if (err.name === 'ValidationError' || err.name === 'CastError') {
         const ERROR = new RequestError('Ошибка. Повторите запрос');
         res.status(ERROR.statusCode).send({ message: ERROR.message });
         return;
