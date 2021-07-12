@@ -61,6 +61,7 @@ module.exports.updateProfile = (req, res) => {
     new: true,
     runValidators: true,
   })
+    .orFail(new NotFoundError('Не найден пользователь с данным id'))
     .then((updateUser) => {
       res.send((updateUser));
     })
@@ -85,6 +86,7 @@ module.exports.updateAvatar = (req, res) => {
     new: true,
     runValidators: true,
   })
+    .orFail(new NotFoundError('Не найден пользователь с данным id'))
     .then((userNewAvatar) => {
       res.send((userNewAvatar));
     })
