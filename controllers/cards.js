@@ -4,45 +4,31 @@ const RequestError = require('../errors/request-error');
 const NotFoundError = require('../errors/notfound-error');
 const ForbiddenError = require('../errors/forbidden-error');
 
-module.exports.getCards = (req, res) => {
+module.exports.getCards = (req, res, next) => {
   Card.find({})
     .then((cards) => res.send(cards))
-    .catch((err) => {
-      res.status(err.statusCode).send({
-        message: err.statusCode === 500
-          ? 'Internal Server error'
-          : err.message,
-      });
-    });
+    .catch(next);
 };
 
-module.exports.createCard = (req, res) => {
+module.exports.createCard = (req, res, next) => {
   const { name, link } = req.body;
 
   Card.create({ name, link, owner: req.user._id })
     .then((card) => res.send({ card }))
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        const ERROR = new RequestError('Ошибка. Повторите запрос');
-        res.status(ERROR.statusCode).send({ message: ERROR.message });
-        return;
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
-      res.status(err.statusCode).send({
-        message: err.statusCode === 500
-          ? 'Internal Server error'
-          : err.message,
-      });
+      next(err);
     });
 };
 
-module.exports.deleteCard = (req, res) => {
+module.exports.deleteCard = (req, res, next) => {
   Card.findById(req.params.cardId)
     .orFail(new NotFoundError('Не найдена карточка с данным id'))
     .then((card) => {
       if (card.owner.toString() !== req.user._id) {
-        const ERROR = new ForbiddenError('У Вас недостаточно прав');
-        res.status(ERROR.statusCode).send({ message: ERROR.message });
-        return;
+        throw new ForbiddenError('У Вас недостаточно прав');
       }
       card.remove()
         .then(() => res.send({ message: 'Kарточка удалена' }));
@@ -53,15 +39,11 @@ module.exports.deleteCard = (req, res) => {
         res.status(ERROR.statusCode).send({ message: ERROR.message });
         return;
       }
-      res.status(err.statusCode).send({
-        message: err.statusCode === 500
-          ? 'Internal Server error'
-          : err.message,
-      });
+      next(err);
     });
 };
 
-module.exports.likeCard = (req, res) => {
+module.exports.likeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $addToSet: { likes: req.user._id } }, { new: true })
     .orFail(new NotFoundError('Не найдена карточка с данным id'))
@@ -74,15 +56,11 @@ module.exports.likeCard = (req, res) => {
         res.status(ERROR.statusCode).send({ message: ERROR.message });
         return;
       }
-      res.status(err.statusCode).send({
-        message: err.statusCode === 500
-          ? 'Internal Server error'
-          : err.message,
-      });
+      next(err);
     });
 };
 
-module.exports.dislikeCard = (req, res) => {
+module.exports.dislikeCard = (req, res, next) => {
   Card.findByIdAndUpdate(req.params.cardId,
     { $pull: { likes: req.user._id } }, { new: true })
     .orFail(new NotFoundError('Не найдена карточка с данным id'))
@@ -95,10 +73,6 @@ module.exports.dislikeCard = (req, res) => {
         res.status(ERROR.statusCode).send({ message: ERROR.message });
         return;
       }
-      res.status(err.statusCode).send({
-        message: err.statusCode === 500
-          ? 'Internal Server error'
-          : err.message,
-      });
+      next(err);
     });
 };

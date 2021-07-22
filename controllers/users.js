@@ -14,6 +14,17 @@ module.exports.getUsers = (req, res, next) => {
     .catch(next);
 };
 
+module.exports.getUser = (req, res, next) => {
+  User.findById(req.user)
+    .then((user) => {
+      if (!user) {
+        throw new NotFoundError('Не найден пользователь с данным id');
+      }
+      res.send(user);
+    })
+    .catch(next);
+};
+
 module.exports.getUserId = (req, res, next) => {
   User.findById(req.params.userId)
     .then((user) => {
@@ -28,17 +39,6 @@ module.exports.getUserId = (req, res, next) => {
       }
       next(error);
     });
-};
-
-module.exports.getUser = (req, res, next) => {
-  User.findById(req.user)
-    .then((user) => {
-      if (!user) {
-        throw new NotFoundError('Не найден пользователь с данным id');
-      }
-      res.send(user);
-    })
-    .catch(next);
 };
 
 module.exports.createUser = (req, res, next) => {
@@ -72,7 +72,12 @@ module.exports.login = (req, res, next) => {
       const token = jwt.sign({ _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
         { expiresIn: '7d' });
-      res.send({ token });
+      res
+        .cookie('jwt', token, {
+          maxAge: 3600000,
+          httpOnly: true,
+        })
+        .end();
     })
     .catch(next);
 };
