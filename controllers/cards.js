@@ -30,8 +30,7 @@ module.exports.deleteCard = (req, res, next) => {
       if (card.owner.toString() !== req.user._id) {
         throw new ForbiddenError('У Вас недостаточно прав');
       }
-      card.remove()
-        .then(() => res.send({ message: 'Kарточка удалена' }));
+      card.remove().then(() => res.send({ message: 'Kарточка удалена' }));
     })
     .catch((err) => {
       if (err.name === 'CastError') {
@@ -44,8 +43,11 @@ module.exports.deleteCard = (req, res, next) => {
 };
 
 module.exports.likeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId,
-    { $addToSet: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $addToSet: { likes: req.user._id } },
+    { new: true },
+  )
     .orFail(new NotFoundError('Не найдена карточка с данным id'))
     .then((data) => {
       res.send(data);
@@ -61,8 +63,11 @@ module.exports.likeCard = (req, res, next) => {
 };
 
 module.exports.dislikeCard = (req, res, next) => {
-  Card.findByIdAndUpdate(req.params.cardId,
-    { $pull: { likes: req.user._id } }, { new: true })
+  Card.findByIdAndUpdate(
+    req.params.cardId,
+    { $pull: { likes: req.user._id } },
+    { new: true },
+  )
     .orFail(new NotFoundError('Не найдена карточка с данным id'))
     .then((data) => {
       res.send(data);

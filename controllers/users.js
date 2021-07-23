@@ -46,17 +46,23 @@ module.exports.createUser = (req, res, next) => {
     name, about, avatar, email, password,
   } = req.body;
 
-  bcrypt.hash(password, 10)
+  bcrypt
+    .hash(password, 10)
     .then((hash) => {
       User.findOne({ email })
         .then((someUser) => {
           if (!someUser) {
             User.create({
-              name, about, avatar, email, password: hash,
-            })
-              .then((user) => res.send({ email: user.email, _id: user._id }));
+              name,
+              about,
+              avatar,
+              email,
+              password: hash,
+            }).then((user) => res.send({ email: user.email, _id: user._id }));
           } else {
-            throw new ConflictError('Пользователь с данным email уже существует');
+            throw new ConflictError(
+              'Пользователь с данным email уже существует',
+            );
           }
         })
         .catch(next);
@@ -69,9 +75,11 @@ module.exports.login = (req, res, next) => {
 
   return User.findUserByCredentials(email, password)
     .then((user) => {
-      const token = jwt.sign({ _id: user._id },
+      const token = jwt.sign(
+        { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret',
-        { expiresIn: '7d' });
+        { expiresIn: '7d' },
+      );
       res.send({ token });
     })
     .catch(next);
@@ -80,12 +88,16 @@ module.exports.login = (req, res, next) => {
 module.exports.updateProfile = (req, res, next) => {
   const { name, about } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { name, about }, {
-    new: true,
-    runValidators: true,
-  })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { name, about },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
     .then((updateUser) => {
-      res.send((updateUser));
+      res.send(updateUser);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
@@ -98,12 +110,16 @@ module.exports.updateProfile = (req, res, next) => {
 module.exports.updateAvatar = (req, res, next) => {
   const { avatar } = req.body;
 
-  User.findByIdAndUpdate(req.user._id, { avatar }, {
-    new: true,
-    runValidators: true,
-  })
+  User.findByIdAndUpdate(
+    req.user._id,
+    { avatar },
+    {
+      new: true,
+      runValidators: true,
+    },
+  )
     .then((userNewAvatar) => {
-      res.send((userNewAvatar));
+      res.send(userNewAvatar);
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
