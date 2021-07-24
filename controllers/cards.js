@@ -34,9 +34,7 @@ module.exports.deleteCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR = new RequestError('Ошибка. Повторите запрос');
-        res.status(ERROR.statusCode).send({ message: ERROR.message });
-        return;
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
       next(err);
     });
@@ -54,9 +52,7 @@ module.exports.likeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR = new RequestError('Ошибка. Повторите запрос');
-        res.status(ERROR.statusCode).send({ message: ERROR.message });
-        return;
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
       next(err);
     });
@@ -74,9 +70,7 @@ module.exports.dislikeCard = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        const ERROR = new RequestError('Ошибка. Повторите запрос');
-        res.status(ERROR.statusCode).send({ message: ERROR.message });
-        return;
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
       next(err);
     });

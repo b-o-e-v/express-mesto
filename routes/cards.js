@@ -15,7 +15,11 @@ router.post(
   celebrate({
     body: Joi.object().keys({
       name: Joi.string().max(30).min(2).required(),
-      link: Joi.string().required(),
+      link: Joi.string()
+        .required()
+        .pattern(
+          /^(https?:\/\/)?([a-zA-z0-9%$&=?/.-]+)\.([a-zA-z0-9%$&=?/.-]+)([a-zA-z0-9%$&=?/.-]+)?(#)?$/,
+        ),
     }),
   }),
   createCard,

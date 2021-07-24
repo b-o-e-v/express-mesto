@@ -35,7 +35,7 @@ module.exports.getUserId = (req, res, next) => {
     })
     .catch((error) => {
       if (error.name === 'CastError') {
-        throw new RequestError('Ошибка. Повторите запрос');
+        next(new RequestError('Не валидный id'));
       }
       next(error);
     });
@@ -58,7 +58,13 @@ module.exports.createUser = (req, res, next) => {
               avatar,
               email,
               password: hash,
-            }).then((user) => res.send({ email: user.email, _id: user._id }));
+            }).then((user) => res.send({
+              _id: user._id,
+              name: user.name,
+              about: user.about,
+              avatar: user.avatar,
+              email: user.email,
+            }));
           } else {
             throw new ConflictError(
               'Пользователь с данным email уже существует',
@@ -101,7 +107,7 @@ module.exports.updateProfile = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Ошибка. Повторите запрос');
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
       next(err);
     });
@@ -123,7 +129,7 @@ module.exports.updateAvatar = (req, res, next) => {
     })
     .catch((err) => {
       if (err.name === 'ValidationError') {
-        throw new RequestError('Ошибка. Повторите запрос');
+        next(new RequestError('Ошибка. Повторите запрос'));
       }
       next(err);
     });
